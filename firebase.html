@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авторизация через GitHub</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #24292e; color: white; border: none; border-radius: 5px; }
+    button:hover { background-color: #555; }
+    #user-info { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <button id="login-btn">Войти через GitHub</button>
+  <div id="user-info"></div>
+
+  <script type="module">
+    // Импортируем необходимые функции из SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js"; [1]
+
+    // Конфигурация вашего проекта Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAOuLCkuAqeq5GTzbWDRHxqQOhM0PZKnZE",
+      authDomain: "vvvv-6109a.firebaseapp.com",
+      projectId: "vvvv-6109a",
+      storageBucket: "vvvv-6109a.firebasestorage.app",
+      messagingSenderId: "41317582664",
+      appId: "1:41317582664:web:99f5b1e08ab2afbff2d57d",
+      measurementId: "G-F6C6BEHJBL"
+    };
+
+    // Инициализация Firebase и Auth
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app); [1, 2]
+    const provider = new GithubAuthProvider(); [1]
+
+    const loginBtn = document.getElementById('login-btn');
+    const userInfoDiv = document.getElementById('user-info');
+
+    // Обработчик клика на кнопку входа
+    loginBtn.addEventListener('click', () => {
+      signInWithPopup(auth, provider) [1]
+        .then((result) => {
+          // Успешный вход. Получаем данные пользователя
+          const user = result.user; [1]
+          userInfoDiv.innerHTML = `
+            <p>Вы успешно вошли!</p>
+            <strong>Имя:</strong> ${user.displayName || 'Не указано'}<br>
+            <strong>Email:</strong> ${user.email || 'Скрыт'}<br>
+            <img src="${user.photoURL}" alt="Аватар" style="width:100px; border-radius:50%; margin-top:10px;">
+          `;
+          console.log("Данные пользователя:", user);
+        })
+        .catch((error) => {
+          // Обработка ошибок
+          console.error("Ошибка авторизации:", error);
+          userInfoDiv.innerText = `Ошибка входа: ${error.message}`; [1]
+        });
+    });
+  </script>
+</body>
+</html>
