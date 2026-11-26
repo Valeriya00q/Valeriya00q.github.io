@@ -3,29 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub Auth с выходом</title>
+  <title>GitHub, Google & Email Auth</title>
   <style>
-    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
     button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; margin: 5px; }
     #login-btn { background-color: #24292e; color: white; }
-    #logout-btn { background-color: #d73a49; color: white; display: none; } /* Скрыта по умолчанию */
+    #google-btn { background-color: #4285F4; color: white; }
+    #logout-btn { background-color: #d73a49; color: white; display: none; }
     #user-info { margin-top: 20px; text-align: center; }
     .avatar { width: 100px; border-radius: 50%; margin-top: 10px; border: 2px solid #24292e; }
+    .email-box { margin-top: 15px; border: 1px solid #ccc; padding: 15px; border-radius: 5px; display: flex; flex-direction: column; gap: 5px; width: 250px; }
+    input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- Кнопки управления -->
-  <button id="login-btn">Войти через GitHub</button>
-  <button id="logout-btn">Выйти</button>
+  <div id="auth-container">
+    <button id="login-btn">Войти через GitHub</button>
+    <button id="google-btn">Войти через Google</button>
 
-  <!-- Блок с информацией о пользователе -->
+    <div class="email-box">
+      <input type="email" id="email-input" placeholder="Электронная почта">
+      <input type="password" id="password-input" placeholder="Пароль">
+      <button id="register-btn" style="background-color: #28a745; color: white;">Регистрация</button>
+      <button id="email-login-btn" style="background-color: #007bff; color: white;">Войти по Email</button>
+    </div>
+  </div>
+
+  <button id="logout-btn">Выйти</button>
   <div id="user-info">Проверка состояния...</div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-    // Импортируем методы signOut и onAuthStateChanged
-    import { getAuth, signInWithPopup, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js"; [3]
+    import { 
+      getAuth, 
+      signInWithPopup, 
+      GithubAuthProvider, 
+      GoogleAuthProvider, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js"; [3]
 
     const firebaseConfig = {
       apiKey: "AIzaSyAOuLCkuAqeq5GTzbWDRHxqQOhM0PZKnZE",
@@ -39,49 +58,77 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app); [2, 3]
-    const provider = new GithubAuthProvider();
+    const githubProvider = new GithubAuthProvider();
+    const googleProvider = new GoogleAuthProvider();
 
     const loginBtn = document.getElementById('login-btn');
+    const googleBtn = document.getElementById('google-btn');
+    const registerBtn = document.getElementById('register-btn');
+    const emailLoginBtn = document.getElementById('email-login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const userInfoDiv = document.getElementById('user-info');
+    const authContainer = document.getElementById('auth-container');
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
 
-    // 1. Отслеживаем состояние авторизации (onAuthStateChanged)
-    // Этот метод автоматически срабатывает при загрузке страницы и при изменении состояния входа/выхода
     onAuthStateChanged(auth, (user) => { [3]
       if (user) {
-        // Пользователь ВОШЕЛ в систему
-        loginBtn.style.display = 'none';
+        authContainer.style.display = 'none';
         logoutBtn.style.display = 'inline-block';
         userInfoDiv.innerHTML = `
           <p>Вы вошли как:</p>
-          <strong>${user.displayName || 'Пользователь GitHub'}</strong><br>
+          <strong>${user.displayName || 'Пользователь'}</strong><br>
           <span>${user.email || 'Email скрыт'}</span><br>
-          <img class="avatar" src="${user.photoURL}" alt="Аватар">
+          <img class="avatar" src="${user.photoURL || 'https://placehold.co/100'}" alt="Аватар">
         `;
       } else {
-        // Пользователь ВЫШЕЛ из системы
-        loginBtn.style.display = 'inline-block';
+        authContainer.style.display = 'block';
         logoutBtn.style.display = 'none';
         userInfoDiv.innerHTML = '<p>Вы не авторизованы. Пожалуйста, войдите.</p>';
       }
     });
 
-    // 2. Логика входа
     loginBtn.addEventListener('click', async () => {
       try {
-        await signInWithPopup(auth, provider);
+        await signInWithPopup(auth, githubProvider);
       } catch (error) {
-        console.error("Ошибка входа:", error);
-        alert("Ошибка входа: " + error.message);
+        console.error(error);
+        alert("Ошибка: " + error.message);
       }
     });
 
-    // 3. Логика выхода
+    googleBtn.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (error) {
+        console.error(error);
+        alert("Ошибка: " + error.message);
+      }
+    });
+
+    registerBtn.addEventListener('click', async () => {
+      try {
+        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+      } catch (error) {
+        console.error(error);
+        alert("Ошибка: " + error.message);
+      }
+    });
+
+    emailLoginBtn.addEventListener('click', async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+      } catch (error) {
+        console.error(error);
+        alert("Ошибка: " + error.message);
+      }
+    });
+
     logoutBtn.addEventListener('click', async () => {
       try {
         await signOut(auth); [3]
       } catch (error) {
-        console.error("Ошибка выхода:", error);
+        console.error(error);
       }
     });
   </script>
