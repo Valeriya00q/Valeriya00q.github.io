@@ -17,30 +17,14 @@
       position: relative;
       overflow: hidden;
     }
-    
-    /* Эмодзи на фоне */
-    .bg-emoji {
-      position: absolute;
-      font-size: 2.5rem;
-      user-select: none;
-      z-index: 0;
-      opacity: 0.6;
-      animation: float 6s ease-in-out infinite alternate;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(-15px) rotate(10deg); }
-    }
 
     /* Стили для вращающихся звездочек */
     .star {
       position: absolute;
-      font-size: 2rem;
       user-select: none;
       z-index: 0;
-      opacity: 0.7;
-      animation: spin 5s linear infinite;
+      opacity: 0.65;
+      animation: spin 6s linear infinite;
     }
 
     @keyframes spin {
@@ -107,19 +91,19 @@
 </head>
 <body>
 
-  <!-- Фоновые эмодзи -->
-  <div class="bg-emoji" style="top: 10%; left: 10%; animation-delay: 0s;">🩷</div>
-  <div class="bg-emoji" style="top: 20%; right: 12%; animation-delay: 1s;">🩷</div>
-  <div class="bg-emoji" style="bottom: 15%; left: 15%; animation-delay: 2s;">🩷</div>
-  <div class="bg-emoji" style="bottom: 25%; right: 10%; animation-delay: 1.5s;">🩷</div>
-  <div class="bg-emoji" style="top: 45%; left: 5%; animation-delay: 0.5s;">🩷</div>
-
-  <!-- Фоновые вращающиеся звездочки -->
-  <div class="star" style="top: 5%; left: 40%;">⭐</div>
-  <div class="star" style="top: 35%; left: 22%;">⭐</div>
-  <div class="star" style="bottom: 30%; right: 25%;">⭐</div>
-  <div class="star" style="bottom: 10%; left: 50%;">⭐</div>
-  <div class="star" style="top: 50%; right: 8%;">⭐</div>
+  <!-- Фоновые вращающиеся звездочки (разного размера и с разной скоростью) -->
+  <div class="star" style="top: 8%; left: 8%; font-size: 2.2rem; animation-duration: 8s;">⭐</div>
+  <div class="star" style="top: 22%; right: 10%; font-size: 1.6rem; animation-duration: 5s;">⭐</div>
+  <div class="star" style="bottom: 12%; left: 14%; font-size: 2.5rem; animation-duration: 9s;">⭐</div>
+  <div class="star" style="bottom: 22%; right: 8%; font-size: 1.8rem; animation-duration: 6s;">⭐</div>
+  <div class="star" style="top: 45%; left: 4%; font-size: 2rem; animation-duration: 7s;">⭐</div>
+  <div class="star" style="top: 5%; left: 42%; font-size: 1.5rem; animation-duration: 4s;">⭐</div>
+  <div class="star" style="top: 32%; left: 24%; font-size: 2.4rem; animation-duration: 10s;">⭐</div>
+  <div class="star" style="bottom: 35%; right: 22%; font-size: 1.7rem; animation-duration: 5.5s;">⭐</div>
+  <div class="star" style="bottom: 8%; left: 48%; font-size: 2.1rem; animation-duration: 7.5s;">⭐</div>
+  <div class="star" style="top: 52%; right: 6%; font-size: 1.9rem; animation-duration: 6.5s;">⭐</div>
+  <div class="star" style="top: 75%; left: 6%; font-size: 2.3rem; animation-duration: 8s;">⭐</div>
+  <div class="star" style="top: 15%; right: 45%; font-size: 1.4rem; animation-duration: 4.5s;">⭐</div>
 
   <div id="auth-container">
     <button id="login-btn">Войти через GitHub</button>
